@@ -24,21 +24,24 @@ task dropkick_curl {
 	Int bigness = ceil(size(files_to_upload, "GB")) + 5
 	
 	command <<<
+		echo "[$(date '+%Y-%m-%d %H:%M:%S')] Booted into container"
 		set -eu pipefail
 		set +x
 		# this needs to be http, not https
 		TOKEN=$(curl -s -H "Metadata-Flavor: Google" \
 			http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token \
 			| sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+		echo "[$(date '+%Y-%m-%d %H:%M:%S')] Grabbed token for this service account"
 		for FILE in ~{sep=' ' files_to_upload}
 		do
 			BASENAME=$(basename "$FILE")
-			echo "Uploading $BASENAME..."
+			echo "[$(date '+%Y-%m-%d %H:%M:%S')] Uploading $BASENAME..."
 			curl -f -X POST \
 			-H "Authorization: Bearer $TOKEN" \
 			-H "Content-Type: application/octet-stream" \
 			--data-binary @"$FILE" \
 			"https://storage.googleapis.com/upload/storage/v1/b/~{destination_bucket}/o?uploadType=media&name=${BASENAME}&ifGenerationMatch=0"
+		echo "[$(date '+%Y-%m-%d %H:%M:%S')] Finished"
 		done
 	>>>
 

@@ -21,13 +21,15 @@ task dropkick_gsutil {
 	Int bigness = ceil(size(files_to_upload, "GB")) + 5
 	
 	command <<<
+		echo "[$(date '+%Y-%m-%d %H:%M:%S')] Booted into container"
 		set -eu pipefail
 		set +x
 		for FILE in ~{sep=' ' files_to_upload}
 		do
 			BASENAME=$(basename "$FILE")
-			echo "Uploading $BASENAME..."
+			echo "[$(date '+%Y-%m-%d %H:%M:%S')] Uploading $BASENAME..."
 			gsutil cp -n "$FILE" "gs://~{destination_bucket}/$BASENAME"
+		echo "[$(date '+%Y-%m-%d %H:%M:%S')] Finished"
 		done
 	>>>
 
