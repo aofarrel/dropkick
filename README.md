@@ -1,5 +1,5 @@
 # dropkick
-Set of WDLs useful for transferring files out of a Terra VM into a specified Google bucket, without relying on the FireCloud API. Designed for and only tested upon Terra, but might work in other GCE environments. These workflows will not work on local environments (ie your laptop) nor Terra's Azure backend.
+Set of WDLs useful for transferring files out of a Terra VM into a specified Google bucket, without relying on the FireCloud API. Designed for and only tested upon Terra WDL workflows, but might work for Terra notebooks, or in other GCE environments. **These workflows will not work on local environments (ie your laptop) nor Terra's Azure backend.**
 
 There are security implications for this process, so please make sure you actually need this:
 * If you are simply trying to get your workflow output files into *any* Google bucket, you don't need this; simply set up your WDL to have workflow-level outputs and they will be depositied in your Terra workspace's Google bucket
@@ -9,7 +9,7 @@ There are security implications for this process, so please make sure you actual
 ## How does it work?
 Every Terra workspace is linked to a Google service account. A service account is sort of a mini-account linked to a billing project. Every Terra workspace has its own service account. When running a WDL task on Terra, you create an emphermal VM which is "aware" of the workspace's service account. Once the VM spins up an instance of the Docker image specified in the task's `runtime` section, you can act as the service account within that Docker container, provided it has the right tools.
 
-You need to know the name of the service account of your workspace in order to give it permission to put files into your destination bucket. This is currently not visible in Terra's UI ("Google Project ID" is something different), so I've created `whoami.wdl` to make getting the service account's name easier.
+Once you know the service account's name (see below), you can set up your destination bucket to accept writes from that service account. 
 
 ## Recommended use
 1. Set up your destination bucket. Recommendations:
@@ -18,9 +18,10 @@ You need to know the name of the service account of your workspace in order to g
 	* Should not be used for anything else besides this project
 	* Does not have fine-grained permissions
 2. Run whoami.wdl in your Terra workspace to get the name of that workspace's service account
+	* As of 2026, the service account name is not visible on Terra's UI ("Google Project ID" is something different), so you cannot skip this step unless you did it earlier.
 3. In your destination bucket, give the workspace service account `storage.objects.create` permissions
 	* This should be the only permission you need to grant
-    * If you are managing permissions using the web interface (console.cloud.google.com) this role has the name "Storage Object Creator"
+	* If you are managing permissions using the web interface (console.cloud.google.com) this role has the name "Storage Object Creator"
 4. Verify your destination bucket does not contain a file named `foo.txt`
 5. Run touch.wdl in your Terra workspace and verify it succeeds in Terra's UI, and that an empty file named `foo.txt` ends up in your destination bucket
 6. Use dropkick.wdl to move the actual files (you'll probably just want to import its task)
