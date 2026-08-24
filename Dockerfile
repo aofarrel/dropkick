@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.14-slim
 RUN apt-get update
 
 # might be needed for gsutil to properly communicate with GCE
@@ -7,12 +7,9 @@ RUN apt-get install -y \
     curl \
     openssl \
     gcc \
-    libffi-dev
+    libffi-dev \
+&& rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y curl
 RUN pip install --no-cache-dir gsutil
-
-# clean up the container
-RUN rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/bin/bash"]
