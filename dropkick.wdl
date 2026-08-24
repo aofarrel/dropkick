@@ -48,7 +48,7 @@ task dropkick_curl {
 	runtime {
 		cpu: 2
 		disks: "local-disk " + bigness + " SSD"
-		docker: "ashedpotatoes/dropkick:0.0.2"
+		docker: "ashedpotatoes/dropkick:0.0.3"
 		memory: "8 GB"
 		preemptible: 2
 		maxRetries: 2

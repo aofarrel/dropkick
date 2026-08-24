@@ -35,7 +35,7 @@ task touch_gsutil {
 	runtime {
 		cpu: 2
 		disks: "local-disk " + 10 + " HDD"
-		docker: "ashedpotatoes/dropkick:0.0.2"
+		docker: "ashedpotatoes/dropkick:0.0.3"
 		memory: "4 GB"
 		preemptible: 2
 	}
@@ -62,7 +62,7 @@ task verify_no_overwrite_gsutil {
 	runtime {
 		cpu: 2
 		disks: "local-disk " + 10 + " HDD"
-		docker: "ashedpotatoes/dropkick:0.0.2"
+		docker: "ashedpotatoes/dropkick:0.0.3"
 		memory: "4 GB"
 		preemptible: 2
 	}
